@@ -28,7 +28,7 @@ Fecha: 31 de octubre de 2026. Este diseño se registra antes de implementar los 
 
 1. La capacidad debe ser mayor que cero. No se repite una misma combinación de nombre y capacidad de presentación.
 2. La calificación debe estar entre 1 y 5 y no puede repetirse la pareja usuario-producto. Estas reglas se validan también mediante restricciones de base de datos.
-3. La dirección elegida para un pedido debe pertenecer al usuario de ese pedido. Esta regla se comprueba en `Pedido.clean()` y en los formularios del administrador. Las futuras escrituras desde la API deberán validar también esa pertenencia; `save()` no ejecuta `full_clean()` automáticamente.
+3. La dirección elegida para un pedido debe pertenecer al usuario de ese pedido. Esta regla se comprueba en `Pedido.clean()` y en los formularios del administrador. `DireccionEnvio.clean()` también rechaza reasignar una dirección a otro usuario cuando tiene pedidos asociados. Las futuras escrituras desde la API deberán validar también esa pertenencia; `save()` no ejecuta `full_clean()` automáticamente.
 4. Se conservan las relaciones protegidas del catálogo original. Una presentación asignada a productos y una dirección usada en pedidos se protegen con `PROTECT`.
 5. Las reseñas se eliminan con `CASCADE` si se elimina su usuario o producto. Las direcciones no utilizadas se eliminan con su usuario.
 6. Los productos y pedidos existentes siguen siendo válidos: presentación y dirección son opcionales, y la relación con proveedores permite una lista vacía.
