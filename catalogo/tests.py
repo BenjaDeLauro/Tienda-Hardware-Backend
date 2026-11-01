@@ -34,8 +34,8 @@ class CatalogoAPITests(APITestCase):
         self.assertEqual(respuesta.status_code, 200)
         self.assertEqual(respuesta.data['precio'], '2500.50')
         self.assertEqual(respuesta.data['stock'], 8)
-        self.assertEqual(respuesta.data['categoria']['id'], self.categoria.pk)
-        self.assertEqual(respuesta.data['marca']['id'], self.marca.pk)
+        self.assertEqual(respuesta.data['categoria'], self.categoria.pk)
+        self.assertEqual(respuesta.data['marca'], self.marca.pk)
         self.assertIsNone(respuesta.data['imagen'])
 
     def test_recurso_inexistente(self):
@@ -89,3 +89,23 @@ class CatalogoAPITests(APITestCase):
                 url = reverse(f'catalogo_api:{recurso}-detail', args=[objeto.pk])
                 self.assertEqual(self.client.delete(url).status_code, 400)
                 objeto.refresh_from_db()
+
+    def test_lista_relaciones_anidadas(self):
+        url = reverse('catalogo_api:producto-list')
+        respuesta = self.client.get(url)
+
+        self.assertEqual(respuesta.status_code, 200)
+
+        producto = respuesta.data[0]
+
+        self.assertEqual(producto['categoria'], {
+            'id': self.categoria.pk,
+            'nombre': self.categoria.nombre,
+            'descripcion': self.categoria.descripcion,
+        })
+
+        self.assertEqual(producto['marca'], {
+            'id': self.marca.pk,
+            'nombre': self.marca.nombre,
+            'descripcion': self.marca.descripcion,
+        })

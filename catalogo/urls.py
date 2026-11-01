@@ -1,21 +1,13 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from .views import (
-    ProductosListCreateAPIView,
-    ProductoDetailAPIView,
-    CategoriaListCreateAPIView,
-    CategoriaDetailAPIView,
-    MarcaListCreateAPIView,
-    MarcaDetailAPIView,
-)
+from .views import CategoriaViewSet, MarcaViewSet, ProductoViewSet
 
 app_name = "catalogo_api"
 
-urlpatterns = [
-    path("productos/", ProductosListCreateAPIView.as_view(), name="producto-list"),
-    path("productos/<int:pk>/", ProductoDetailAPIView.as_view(), name="producto-detail"),
-    path("categorias/", CategoriaListCreateAPIView.as_view(), name="categoria-list"),
-    path("categorias/<int:pk>/", CategoriaDetailAPIView.as_view(), name="categoria-detail"),
-    path("marcas/", MarcaListCreateAPIView.as_view(), name="marca-list"),
-    path("marcas/<int:pk>/", MarcaDetailAPIView.as_view(), name="marca-detail"),
-]
+router = SimpleRouter()
+
+router.register("productos", ProductoViewSet, basename="producto")
+router.register("categorias", CategoriaViewSet, basename="categoria")
+router.register("marcas", MarcaViewSet, basename="marca")
+
+urlpatterns = router.urls

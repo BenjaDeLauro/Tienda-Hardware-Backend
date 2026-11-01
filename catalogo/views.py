@@ -1,5 +1,5 @@
 from django.db.models.deletion import ProtectedError
-from rest_framework import generics
+from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
 from .models import Categoria, Marca, Producto
@@ -12,24 +12,16 @@ from .serializers import (
 )
 
 
-# GET lista productos; POST crea un producto.
-class ProductosListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Producto.objects.all().select_related("categoria", "marca")
+# ModelViewSet de producto: contiene metodos GET,PUT,PATCH y DELETE
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.select_related(
+        "categoria", "marca"
+    ).order_by("id")
+    serializer_class = ProductoSerializer
     permission_classes = [IsStaffOrReadOnly]
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
-            return ProductoPublicSerializer
-        return ProductoSerializer
-
-
-# GET obtiene un producto; PUT/PATCH modifican; DELETE elimina.
-class ProductoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Producto.objects.all().select_related("categoria", "marca")
-    permission_classes = [IsStaffOrReadOnly]
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
+        if self.action == "list":
             return ProductoPublicSerializer
         return ProductoSerializer
 
@@ -37,19 +29,13 @@ class ProductoDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         try:
             instance.delete()
         except ProtectedError:
-            raise ValidationError("No se puede eliminar un producto incluido en pedidos.")
+            raise ValidationError(
+                "No se puede eliminar un producto incluido en pedidos."
+            )
 
-
-# GET lista categorías; POST crea una categoría.
-class CategoriaListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Categoria.objects.all()
-    serializer_class = CategoriaSerializer
-    permission_classes = [IsStaffOrReadOnly]
-
-
-# GET, PUT, PATCH y DELETE de una categoría.
-class CategoriaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Categoria.objects.all()
+# ModelViewSet de categoría.
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.order_by("id")
     serializer_class = CategoriaSerializer
     permission_classes = [IsStaffOrReadOnly]
 
@@ -57,19 +43,12 @@ class CategoriaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         try:
             instance.delete()
         except ProtectedError:
-            raise ValidationError("No se puede eliminar una categoría con productos asociados.")
-
-
-# GET lista marcas; POST crea una marca.
-class MarcaListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Marca.objects.all()
-    serializer_class = MarcaSerializer
-    permission_classes = [IsStaffOrReadOnly]
-
-
-# GET, PUT, PATCH y DELETE de una marca.
-class MarcaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Marca.objects.all()
+            raise ValidationError(
+                "No se puede eliminar una categoría con productos asociados."
+            )
+# ModelViewSet de marca.
+class MarcaViewSet(viewsets.ModelViewSet):
+    queryset = Marca.objects.order_by("id")
     serializer_class = MarcaSerializer
     permission_classes = [IsStaffOrReadOnly]
 
@@ -77,4 +56,6 @@ class MarcaDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         try:
             instance.delete()
         except ProtectedError:
-            raise ValidationError("No se puede eliminar una marca con productos asociados.")
+            raise ValidationError(
+                "No se puede eliminar una marca con productos asociados."
+            )
