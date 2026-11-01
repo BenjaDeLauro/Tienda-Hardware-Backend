@@ -13,12 +13,15 @@ class PedidoAdmin(admin.ModelAdmin):
         'id',
         'usuario',
         'fecha',
-        'estado'
+        'estado',
+        'direccion_envio',
     )
 
     list_filter = ('estado', 'fecha')
     search_fields = ('usuario__username',)
     ordering = ('-fecha',)
+    list_select_related = ('usuario', 'direccion_envio')
+    autocomplete_fields = ('usuario', 'direccion_envio')
 
     inlines = [DetallePedidoInline]
 
