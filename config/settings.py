@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     # Aplicaciones externas
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 
     # Aplicaciones del proyecto
     'usuarios',
@@ -52,6 +54,7 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,12 +138,20 @@ LOGOUT_REDIRECT_URL = 'inicio'
 NOMBRE_TIENDA = 'Cervecería y Bebidas Artesanales'
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'catalogo.pagination.CatalogoPagination',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_THROTTLE_RATES': {'autenticacion': '10/min'},
 }
+
+CORS_ALLOWED_ORIGINS = [
+    origin.strip() for origin in os.environ.get(
+        'CORS_ALLOWED_ORIGINS', 'http://127.0.0.1:3000,http://localhost:3000'
+    ).split(',') if origin.strip()
+]
+CORS_URLS_REGEX = r'^/api/.*$'
 
 
 # Email

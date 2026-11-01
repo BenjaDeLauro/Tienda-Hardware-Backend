@@ -1,6 +1,10 @@
 # Cervecería y Bebidas Artesanales — Backend
 
-Sistema de gestión de catálogo, clientes y pedidos de una cervecería y tienda de bebidas artesanales. Backend de la EFI 2026 de Ingeniería de Software, conectado al futuro frontend de Programación III.
+Sistema de gestión de catálogo, clientes y pedidos de una cervecería y tienda de bebidas artesanales. Backend de la EFI 2026 de Ingeniería de Software, conectado al frontend ImperioSur de Programación III mediante la API de catálogo.
+
+## Integración con el frontend
+
+La rama `feature/integracion-frontend` reúne autenticación y la API de catálogo existente. CORS, búsqueda y paginación permiten que [ImperioSur-Frontend](https://github.com/EstebanjsrZ/ImperioSur-Frontend) muestre productos, imágenes, precios y stock de Django. El contrato, comandos, datos demo y requisitos pendientes se detallan en [docs/integracion-frontend.md](docs/integracion-frontend.md). La conexión de lectura local está verificada; la EFI todavía tiene tareas pendientes del equipo.
 
 ## Integrantes
 
@@ -81,4 +85,4 @@ Cada aporte se desarrolla en una rama `feature/*` y se propone mediante un Pull 
 
 La rama de modelos completa las tablas, sus migraciones y administración. La rama `feature/autenticacion` incorpora las sesiones, tokens, permisos, bienvenida y gestión mediante templates. Parte de `feature/models`; su PR se revisa inicialmente contra esa rama para mostrar únicamente el aporte de autenticación. Cuando modelos se integre a `develop`, también se deberá cambiar la base del PR de autenticación a `develop`.
 
-La API de catálogo se desarrolla en `feature/api-rest`. Las vistas HTML se mantienen en `catalogo/vistas_web.py` y `catalogo/urls_web.py` para facilitar la integración con esa API. Los requisitos restantes de ViewSets, CORS, documentación de API, Docker y frontend corresponden a sus tareas. El nombre comercial definitivo y las capturas finales también quedan pendientes para la entrega.
+La API de catálogo se desarrolla en `feature/api-rest`. Las vistas HTML se mantienen en `catalogo/vistas_web.py` y `catalogo/urls_web.py`. La rama `feature/integracion-frontend` reúne esas partes, configura CORS local y adapta el catálogo con búsqueda y paginación. Parte de autenticación y su PR se revisa contra esa rama hasta integrar las dependencias a `develop`. Los ViewSets restantes, actions, documentación OpenAPI, Docker y los flujos pendientes del frontend corresponden a sus tareas. La marca del frontend es ImperioSur, de Río Cuarto; todavía faltan las capturas finales del sistema completo para la entrega.
