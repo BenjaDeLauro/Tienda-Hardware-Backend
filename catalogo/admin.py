@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Categoria, Marca, Producto
+from .models import Categoria, Marca, Presentacion, Producto, Proveedor, Resena
 
 
 @admin.register(Categoria)
@@ -18,7 +18,36 @@ class MarcaAdmin(admin.ModelAdmin):
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'categoria', 'marca', 'precio', 'stock')
-    list_filter = ('categoria', 'marca')
+    list_display = ('id', 'nombre', 'categoria', 'marca', 'presentacion', 'precio', 'stock')
+    list_filter = ('categoria', 'marca', 'presentacion', 'proveedores')
     search_fields = ('nombre', 'descripcion')
     ordering = ('nombre',)
+    list_select_related = ('categoria', 'marca', 'presentacion')
+    filter_horizontal = ('proveedores',)
+
+
+@admin.register(Presentacion)
+class PresentacionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'nombre', 'capacidad_ml')
+    list_filter = ('capacidad_ml',)
+    search_fields = ('nombre',)
+    ordering = ('nombre', 'capacidad_ml')
+
+
+@admin.register(Proveedor)
+class ProveedorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'nombre', 'email', 'telefono', 'activo')
+    list_filter = ('activo',)
+    search_fields = ('nombre', 'email', 'telefono')
+    ordering = ('nombre',)
+
+
+@admin.register(Resena)
+class ResenaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'producto', 'usuario', 'calificacion', 'fecha')
+    list_filter = ('calificacion', 'fecha')
+    search_fields = ('producto__nombre', 'usuario__username', 'comentario')
+    ordering = ('-fecha', '-pk')
+    list_select_related = ('producto', 'usuario')
+    autocomplete_fields = ('producto', 'usuario')
+    readonly_fields = ('fecha',)

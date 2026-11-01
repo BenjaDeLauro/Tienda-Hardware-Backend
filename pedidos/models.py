@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 
 
@@ -22,6 +23,27 @@ class Pedido(models.Model):
         choices=ESTADOS,
         default='pendiente'
     )
+
+    direccion_envio = models.ForeignKey(
+        'usuarios.DireccionEnvio',
+        on_delete=models.PROTECT,
+        related_name='pedidos',
+        blank=True,
+        null=True,
+    )
+
+    def clean(self):
+        super().clean()
+        if self.direccion_envio_id and self.usuario_id:
+            try:
+                direccion = self.direccion_envio
+            except ObjectDoesNotExist:
+                # La validación del ForeignKey informa la dirección inexistente.
+                return
+            if direccion.usuario_id != self.usuario_id:
+                raise ValidationError({
+                    'direccion_envio': 'La dirección debe pertenecer al usuario del pedido.',
+                })
 
     def __str__(self):
         return f'Pedido #{self.id} - {self.usuario.username}'

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario
+from .models import DireccionEnvio, Usuario
 
 
 @admin.register(Usuario)
@@ -25,3 +25,13 @@ class UsuarioAdmin(UserAdmin):
     )
 
     ordering = ('username',)
+
+
+@admin.register(DireccionEnvio)
+class DireccionEnvioAdmin(admin.ModelAdmin):
+    list_display = ('id', 'usuario', 'destinatario', 'calle', 'numero', 'ciudad', 'provincia')
+    list_filter = ('pais', 'provincia', 'ciudad')
+    search_fields = ('usuario__username', 'destinatario', 'calle', 'codigo_postal')
+    ordering = ('ciudad', 'calle', 'numero')
+    list_select_related = ('usuario',)
+    autocomplete_fields = ('usuario',)
