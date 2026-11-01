@@ -1,5 +1,5 @@
 from django.db.models.deletion import ProtectedError
-from rest_framework import viewsets
+from rest_framework import filters, viewsets
 from rest_framework.exceptions import ValidationError
 
 from .models import Categoria, Marca, Producto
@@ -19,6 +19,17 @@ class ProductoViewSet(viewsets.ModelViewSet):
     ).order_by("id")
     serializer_class = ProductoSerializer
     permission_classes = [IsStaffOrReadOnly]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['nombre', 'descripcion', 'categoria__nombre', 'marca__nombre']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        categoria = self.request.query_params.get('categoria')
+        if categoria:
+            if not categoria.isdecimal():
+                raise ValidationError({'categoria': 'Debe ser el ID de una categoría.'})
+            queryset = queryset.filter(categoria_id=int(categoria))
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
